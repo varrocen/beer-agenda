@@ -37,6 +37,13 @@ uv run pre-commit install
 crawl4ai-setup
 ```
 
+6. Setup Ollama (start server and download model):
+
+```bash
+ollama serve &
+ollama pull llama3.1:8b
+```
+
 ## Run
 
 Run pre-commit on all files manually:

@@ -66,6 +66,12 @@ Run crawler:
 uv run python main.py
 ```
 
+Run crawler with debug mode (saves raw markdown to `outputs/debug/`):
+
+```bash
+DEBUG=true uv run python main.py
+```
+
 ## Tests
 
 Run JS tests:

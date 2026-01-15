@@ -29,7 +29,9 @@ beer-agenda/
 ├── models/
 │   └── event.py             # Event Pydantic model
 ├── outputs/
-│   └── events.md            # Generated markdown output
+│   ├── events.md            # Generated markdown output
+│   └── debug/               # Debug files (when DEBUG=true)
+│       └── facebook-events-page-{page_name}.md
 ├── tests/
 │   └── crawlers/
 │       └── scripts/
@@ -48,6 +50,7 @@ beer-agenda/
 - **extractors/**: LLM extraction strategies and configuration
 - **models/**: Pydantic data models for validation
 - **outputs/**: Generated markdown files
+- **outputs/debug/**: Debug files saved when `DEBUG=true` (raw markdown before LLM extraction)
 - **tests/**: Test files mirroring the source structure
 
 ## Tech Stack
@@ -72,6 +75,17 @@ ollama pull llama3.1:8b
 ```
 
 The server must be running on `localhost:11434` before using LLM extraction.
+
+## Debug Mode
+
+Enable debug mode to save raw crawled markdown before LLM extraction. Useful for debugging extraction issues.
+
+```bash
+# Run with debug mode enabled
+DEBUG=true mise exec -- uv run main.py
+```
+
+Debug files are saved to `outputs/debug/` with the naming pattern `facebook-events-page-{page_name}.md`.
 
 ## Development Commands
 

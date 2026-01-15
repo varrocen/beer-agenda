@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig
@@ -7,6 +8,7 @@ from extractors.events import get_facebook_events_extraction_strategy
 from models.event import Event
 
 SCRIPTS_DIR = Path(__file__).parent / "scripts"
+DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 
 def get_facebook_browser_config() -> BrowserConfig:
@@ -51,11 +53,11 @@ async def crawl_facebook_events(page_name: str) -> list[Event]:
             print(f"Crawl failed: {result.error_message}")
             return []
 
-        # Debug: save raw markdown to see what LLM receives
-        if result.markdown:
-            debug_path = "outputs/debug_markdown.md"
-            with open(debug_path, "w") as f:
-                f.write(result.markdown)
+        if DEBUG and result.markdown:
+            debug_dir = Path("outputs/debug")
+            debug_dir.mkdir(parents=True, exist_ok=True)
+            debug_path = debug_dir / f"facebook-events-page-{page_name}.md"
+            debug_path.write_text(result.markdown)
             print(f"Debug markdown saved to {debug_path}")
 
         if not result.extracted_content:

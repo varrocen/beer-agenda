@@ -1,7 +1,8 @@
 [tools]
+node = "24"
+ollama = "latest"
 python = "3.12"
 uv = "latest"
-ollama = "latest"
 
 [env]
 _.python.venv = { path = ".venv", create = true }

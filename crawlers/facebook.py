@@ -1,9 +1,12 @@
 import json
+from pathlib import Path
 
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlerRunConfig
 
-from extractors.events import get_extraction_strategy
+from extractors.events import get_facebook_events_extraction_strategy
 from models.event import Event
+
+SCRIPTS_DIR = Path(__file__).parent / "scripts"
 
 
 def get_facebook_browser_config() -> BrowserConfig:
@@ -21,38 +24,16 @@ def get_facebook_browser_config() -> BrowserConfig:
 
 def get_facebook_run_config() -> CrawlerRunConfig:
     """Get Facebook-specific run configuration with LLM extraction."""
-    # Script to dismiss popups (cookies + login)
-    dismiss_popups_js = """
-    (async () => {
-        // Wait for page to load
-        await new Promise(r => setTimeout(r, 2000));
-
-        // Dismiss cookie popup
-        const buttons = [...document.querySelectorAll('div[role="button"], span, button')];
-        const declineBtn = buttons.find(b => b.textContent.includes('Decline optional cookies'));
-        if (declineBtn) declineBtn.click();
-
-        // Wait and scroll to trigger login popup
-        await new Promise(r => setTimeout(r, 1000));
-        window.scrollTo(0, document.body.scrollHeight);
-
-        // Wait for login popup and close it
-        await new Promise(r => setTimeout(r, 2000));
-        const closeBtn = document.querySelector('[aria-label="Close"]');
-        if (closeBtn) closeBtn.click();
-
-        // Scroll again to load more content
-        await new Promise(r => setTimeout(r, 1000));
-        window.scrollTo(0, document.body.scrollHeight);
-    })();
-    """
+    decline_popups_and_scroll_js = (
+        SCRIPTS_DIR / "facebook_decline_popups_and_scroll.js"
+    ).read_text()
     return CrawlerRunConfig(
         simulate_user=True,
         mean_delay=3.0,
         delay_before_return_html=12.0,
         scroll_delay=1.0,
-        js_code=dismiss_popups_js,
-        extraction_strategy=get_extraction_strategy(),
+        js_code=decline_popups_and_scroll_js,
+        extraction_strategy=get_facebook_events_extraction_strategy(),
     )
 
 

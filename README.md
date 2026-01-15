@@ -25,6 +25,12 @@ mise install
 uv sync
 ```
 
+6. Install Node.js dependencies:
+
+```bash
+npm install
+```
+
 4. Install pre-commit hooks:
 
 ```bash
@@ -37,7 +43,9 @@ uv run pre-commit install
 crawl4ai-setup
 ```
 
-6. Setup Ollama (start server and download model):
+## Ollama server
+
+Setup Ollama (start server and download model):
 
 ```bash
 ollama serve &
@@ -56,6 +64,20 @@ Run crawler:
 
 ```bash
 uv run python main.py
+```
+
+## Tests
+
+Run JS tests:
+
+```bash
+npm test
+```
+
+Run JS tests in watch mode:
+
+```bash
+npm run test:watch
 ```
 
 ## Commits

@@ -1,11 +1,11 @@
 {
-  "editor.tabSize": 2,
-  "editor.insertSpaces": true,
-  "editor.detectIndentation": false,
-  "[python]": {
-    "editor.tabSize": 2
-  },
-  "[toml]": {
-    "editor.tabSize": 2
-  }
+	"editor.tabSize": 2,
+	"editor.insertSpaces": true,
+	"editor.detectIndentation": false,
+	"[python]": {
+		"editor.tabSize": 2
+	},
+	"[toml]": {
+		"editor.tabSize": 2
+	}
 }

@@ -7,7 +7,7 @@ OLLAMA_BASE_URL = "http://localhost:11434"
 OLLAMA_MODEL = "ollama/llama3.1:8b"
 
 
-def get_extraction_strategy() -> LLMExtractionStrategy:
+def get_facebook_events_extraction_strategy() -> LLMExtractionStrategy:
     """Get LLM extraction strategy for events."""
     llm_config = LLMConfig(
         provider=OLLAMA_MODEL,

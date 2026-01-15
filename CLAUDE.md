@@ -2,29 +2,53 @@
 
 Web crawler project to aggregate beer-related events from various sources and generate markdown output.
 
+## IMPORTANT: Validation After Code Changes
+
+**ALWAYS run validation after modifying any code. This is MANDATORY, not optional.**
+
+```bash
+# Run JS tests
+mise exec -- npm test
+
+# Full validation (run the crawler - takes ~3 minutes)
+mise exec -- uv run main.py
+```
+
+**DO NOT proceed to other tasks until validation passes.**
+
 ## Project Structure
 
 ```
 beer-agenda/
 ├── crawlers/
-│   └── facebook.py          # Facebook-specific crawler
+│   ├── facebook.py          # Facebook-specific crawler
+│   └── scripts/
+│       └── facebook_decline_popups_and_scroll.js  # JS scripts for browser automation
 ├── extractors/
 │   └── events.py            # LLMExtractionStrategy + Pydantic schema
 ├── models/
 │   └── event.py             # Event Pydantic model
 ├── outputs/
 │   └── events.md            # Generated markdown output
+├── tests/
+│   └── crawlers/
+│       └── scripts/
+│           ├── facebook_decline_popups_and_scroll.test.js
+│           └── fixtures/
 ├── main.py                  # Entry point
 ├── pyproject.toml
+├── biome.json               # Biome configuration for JS linting/formatting
 └── CLAUDE.md
 ```
 
 ### Module Responsibilities
 
 - **crawlers/**: Web crawling logic, one file per source (Facebook, etc.)
+- **crawlers/scripts/**: JavaScript files for browser automation (popups, etc.)
 - **extractors/**: LLM extraction strategies and configuration
 - **models/**: Pydantic data models for validation
 - **outputs/**: Generated markdown files
+- **tests/**: Test files mirroring the source structure
 
 ## Tech Stack
 
@@ -37,14 +61,14 @@ beer-agenda/
 
 ## Ollama Setup
 
-Ollama is managed by mise but requires manual setup for the server and model:
+Ollama is installed via mise. Start the server and download the model:
 
 ```bash
 # Start Ollama server (in a separate terminal or background)
-mise exec -- ollama serve &
+ollama serve &
 
 # Download the model
-mise exec -- ollama pull llama3.1:8b
+ollama pull llama3.1:8b
 ```
 
 The server must be running on `localhost:11434` before using LLM extraction.
@@ -68,17 +92,16 @@ mise exec -- uv run pre-commit run --all-files
 
 # Commit with conventional commits
 mise exec -- uv run cz commit
+
+# Install Node.js dependencies
+mise exec -- npm install
+
+# Run JS tests
+mise exec -- npm test
+
+# Run JS tests in watch mode
+mise exec -- npm run test:watch
 ```
-
-## Development Workflow
-
-After modifying any code, always run the main script to verify there are no errors:
-
-```bash
-mise exec -- uv run main.py
-```
-
-If an error occurs, fix it before continuing with other tasks.
 
 ## Crawl4AI Configuration
 
@@ -196,6 +219,52 @@ strategy = LLMExtractionStrategy(
     instruction="Extract all events from this Facebook page",
 )
 ```
+
+## JavaScript Testing Strategy
+
+We use **Jest** with **CommonJS** for testing browser automation scripts.
+
+### Why Jest + CommonJS?
+
+The scripts in `crawlers/scripts/` are injected into browsers via Playwright (crawl4ai). Playwright doesn't support ES modules (`export`), so scripts must be plain JavaScript.
+
+| Option | Problem |
+|--------|---------|
+| Vitest | Requires ES modules, incompatible with browser scripts |
+| **Jest + CommonJS** | Single file works in both Node.js and browser |
+
+### How it works
+
+Scripts use conditional exports to work in both environments:
+
+```javascript
+function findDeclineButton() { /* ... */ }
+
+if (typeof module !== "undefined" && module.exports) {
+    // Node.js (Jest) → export functions
+    module.exports = { findDeclineButton };
+} else {
+    // Browser (Playwright) → execute
+    declinePopupsAndScroll();
+}
+```
+
+- **In Node.js**: `module` exists → exports functions for testing
+- **In browser**: `module` is undefined → executes the script
+
+### Test structure
+
+```
+tests/
+└── crawlers/
+    └── scripts/
+        ├── facebook_decline_popups_and_scroll.test.js
+        └── fixtures/
+            ├── facebook_cookies_popup.html
+            └── facebook_login_popup.html
+```
+
+Fixtures contain real Facebook HTML to test selectors against actual markup.
 
 ## Output Format
 

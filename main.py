@@ -3,12 +3,13 @@ from datetime import datetime
 from pathlib import Path
 
 from crawlers.facebook import crawl_facebook_events
+from models.event import Event
 
 OUTPUT_DIR = Path("outputs")
 
 
-def generate_markdown(raw_content: str, source_url: str) -> None:
-    """Generate markdown file from crawled content."""
+def generate_markdown(events: list[Event], source_url: str) -> None:
+    """Generate markdown file from extracted events."""
     OUTPUT_DIR.mkdir(exist_ok=True)
     output_path = OUTPUT_DIR / "events.md"
 
@@ -21,7 +22,16 @@ def generate_markdown(raw_content: str, source_url: str) -> None:
 
 """
 
-    content = header + raw_content
+    events_md = ""
+    for event in events:
+        events_md += f"""## {event.title}
+- **Date:** {event.date}
+- **Organisateur:** {event.organizer}
+- **Lien:** {event.link}
+
+"""
+
+    content = header + events_md
     output_path.write_text(content, encoding="utf-8")
     print(f"Markdown saved to {output_path}")
 
@@ -32,13 +42,14 @@ async def main() -> None:
     source_url = f"https://www.facebook.com/{page_name}/events"
 
     print(f"Crawling {page_name} events...")
-    content = await crawl_facebook_events(page_name)
+    events = await crawl_facebook_events(page_name)
 
-    if not content:
-        print("Failed to retrieve content.")
+    if not events:
+        print("No events found.")
         return
 
-    generate_markdown(content, source_url)
+    print(f"Found {len(events)} events.")
+    generate_markdown(events, source_url)
     print("Done!")
 
 

@@ -35,6 +35,20 @@ beer-agenda/
 - uv for dependency management
 - mise for tool version management
 
+## Ollama Setup
+
+Ollama is managed by mise but requires manual setup for the server and model:
+
+```bash
+# Start Ollama server (in a separate terminal or background)
+mise exec -- ollama serve &
+
+# Download the model
+mise exec -- ollama pull llama3.1:8b
+```
+
+The server must be running on `localhost:11434` before using LLM extraction.
+
 ## Development Commands
 
 Always use `mise exec --` to run uv commands:
@@ -148,7 +162,7 @@ Recommended models for extraction:
 
 | Model | Size | Quality | RAM |
 |-------|------|---------|-----|
-| `llama3.2:3b` | 3B | Correct | ~4 Go |
+| `llama3.1:8b` | 8B | Good | ~8 Go |
 | `qwen2.5:7b` | 7B | Very good | ~8 Go |
 
 ### Pydantic Schema
@@ -172,7 +186,7 @@ from crawl4ai import LLMConfig
 from crawl4ai.extraction_strategy import LLMExtractionStrategy
 
 llm_config = LLMConfig(
-    provider="ollama/llama3.2",
+    provider="ollama/llama3.1:8b",
     base_url="http://localhost:11434",
 )
 

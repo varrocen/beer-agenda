@@ -31,22 +31,24 @@ uv sync
 uv run pre-commit install
 ```
 
-To run pre-commit on all files manually:
-
-```bash
-uv run pre-commit run --all-files
-```
-
 5. Setup crawl4ai (install Playwright and browsers):
 
 ```bash
 crawl4ai-setup
 ```
 
-6. Run demo crawler:
+## Run
+
+Run pre-commit on all files manually:
 
 ```bash
-uv run python crawl.py
+uv run pre-commit run --all-files
+```
+
+Run crawler:
+
+```bash
+uv run python main.py
 ```
 
 ## Commits

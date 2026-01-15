@@ -71,7 +71,7 @@ Ollama is installed via mise. Start the server and download the model:
 ollama serve &
 
 # Download the model
-ollama pull llama3.1:8b
+ollama pull mistral:7b
 ```
 
 The server must be running on `localhost:11434` before using LLM extraction.
@@ -197,10 +197,11 @@ We use **LLM-based extraction** with Ollama instead of CSS-based extraction.
 
 Recommended models for extraction:
 
-| Model | Size | Quality | RAM |
-|-------|------|---------|-----|
-| `llama3.1:8b` | 8B | Good | ~8 Go |
-| `qwen2.5:7b` | 7B | Very good | ~8 Go |
+| Model | Size | Quality | RAM | Note |
+|-------|------|---------|-----|------|
+| `mistral:7b` | 7B | Good | ~8 Go | French company (sovereignty) |
+| `llama3.1:8b` | 8B | Good | ~8 Go | Meta |
+| `qwen2.5:7b` | 7B | Very good | ~8 Go | Alibaba |
 
 ### Pydantic Schema
 

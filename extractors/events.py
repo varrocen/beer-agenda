@@ -4,7 +4,7 @@ from crawl4ai.extraction_strategy import LLMExtractionStrategy
 from models.event import Event
 
 OLLAMA_BASE_URL = "http://localhost:11434"
-OLLAMA_MODEL = "ollama/llama3.1:8b"
+OLLAMA_MODEL = "ollama/mistral:7b"
 
 
 def get_facebook_events_extraction_strategy() -> LLMExtractionStrategy:

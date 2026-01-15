@@ -49,7 +49,7 @@ Setup Ollama (start server and download model):
 
 ```bash
 ollama serve &
-ollama pull mistral:7b
+ollama pull mistral
 ```
 
 ## Run
